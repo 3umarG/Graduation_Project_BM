@@ -2,6 +2,7 @@ package com.bm.graduationproject.controllers;
 
 import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.dtos.CurrencyResponseDto;
+import com.bm.graduationproject.enums.Currency;
 import com.bm.graduationproject.services.BaseCurrencyService;
 import com.bm.graduationproject.services.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,12 @@ public class CurrencyController {
         this.service=service;
     }
     @GetMapping("/conversion")
-    public ConversionResponseDto convertOrCompare(@RequestParam("from") String from
-                                , @RequestParam("to1") String to1
-                                , @RequestParam(value = "to2",required = false) String to2
+    public ConversionResponseDto convertOrCompare(@RequestParam("from") Currency from
+                                , @RequestParam("to1") Currency to1
+                                , @RequestParam(value = "to2",required = false) Currency to2
                                 , @RequestParam("amount") Double amount)
     {
-        return this.service.convert(from,to1,amount);
+        return this.service.convert(from.name(),to1.name(),amount);
     }
 
     @GetMapping()

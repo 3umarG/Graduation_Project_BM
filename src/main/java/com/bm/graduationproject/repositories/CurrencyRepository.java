@@ -1,6 +1,6 @@
 package com.bm.graduationproject.repositories;
 
-import com.bm.graduationproject.models.Data;
+import com.bm.graduationproject.models.ConversionOpenApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface CurrencyRepository {
 
     @GetMapping("/pair/{fromCurrency}/{toCurrency}")
-    Data getCurrencyPair(@PathVariable("fromCurrency") String fromCurrency,
-                         @PathVariable("toCurrency") String toCurrency);
+    ConversionOpenApiResponse getCurrencyPair(@PathVariable("fromCurrency") String fromCurrency,
+                                              @PathVariable("toCurrency") String toCurrency);
 }

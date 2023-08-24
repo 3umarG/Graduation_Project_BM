@@ -12,3 +12,4 @@ public class ConversionDto {
     String destination;
     double amount;
 }
+

@@ -1,13 +1,13 @@
 package com.bm.graduationproject.services;
 
 
-import com.bm.graduationproject.models.Data;
-import com.bm.graduationproject.dtos.DataDto;
+import com.bm.graduationproject.dtos.ConversionDto;
+import com.bm.graduationproject.models.ConversionOpenApiResponse;
 
 public interface BaseCurrencyService {
 
-    Data getAll(String from, String to);
+    ConversionOpenApiResponse getAll(String from, String to);
 
-    DataDto getWhatWeNeed(String from, String to,double amount);
+    ConversionDto convert(String from, String to, double amount);
 
 }

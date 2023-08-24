@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ConversionDto {
+public class ConversionResponseDto {
     String source;
     String destination;
     double amount;

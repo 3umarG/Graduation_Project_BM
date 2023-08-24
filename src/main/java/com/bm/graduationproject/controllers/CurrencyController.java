@@ -16,11 +16,12 @@ public class CurrencyController {
     public CurrencyController(CurrencyService service){
         this.service=service;
     }
-    @GetMapping("/conversion/{from}/{to}/{amount}")
-    public DataDto getWhatWeNeed(@PathVariable("from") String from
-                                ,@PathVariable("to") String to
-                                ,@PathVariable("amount") double amount)
+    @GetMapping("/conversion")
+    public DataDto convertOrCompare(@RequestParam("from") String from
+                                ,@RequestParam("to1") String to1
+                                ,@RequestParam("to2") String to2
+                                ,@RequestParam("amount") Double amount)
     {
-        return this.service.getWhatWeNeed(from,to,amount);
+        return this.service.convert(from,to1,amount);
     }
 }

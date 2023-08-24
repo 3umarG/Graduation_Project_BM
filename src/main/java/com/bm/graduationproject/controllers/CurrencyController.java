@@ -1,11 +1,11 @@
 package com.bm.graduationproject.controllers;
 
-import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.dtos.CurrencyResponseDto;
 import com.bm.graduationproject.enums.Currency;
 import com.bm.graduationproject.models.ApiCustomResponse;
-import com.bm.graduationproject.services.BaseCurrencyService;
+import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.services.CurrencyService;
+import com.bm.graduationproject.services.CurrencyServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/currency")
 public class CurrencyController {
-    private BaseCurrencyService service;
+    private CurrencyService service;
 
     @Autowired
-    public CurrencyController(CurrencyService service) {
+    public CurrencyController(CurrencyServiceImp service) {
         this.service = service;
     }
 
@@ -43,5 +43,15 @@ public class CurrencyController {
                         .statusCode(200)
                         .isSuccess(true)
                         .build());
+    }
+
+
+    @PostMapping()
+    public ResponseEntity<ApiCustomResponse<FavoritesResponseDto>> getExchangeRate(@RequestParam(name = "base") Currency baseCurrency, @RequestBody List<Currency> favorites){
+        return ResponseEntity.ok(ApiCustomResponse.<FavoritesResponseDto>builder()
+                        .data(service.getExchangeRate(baseCurrency, favorites))
+                        .isSuccess(true)
+                        .statusCode(200)
+                .build());
     }
 }

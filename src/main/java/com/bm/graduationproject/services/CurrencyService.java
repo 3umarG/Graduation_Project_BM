@@ -23,9 +23,9 @@ public class CurrencyService implements BaseCurrencyService {
     @Override
     public DataDto getWhatWeNeed(String from, String to,double amount){
         DataDto dataDto = new DataDto();
-        dataDto.setSource(from);
-        dataDto.setDestination(to);
-        dataDto.setAmount((this.getAll(from,to).getConversion_rate())* amount);
+        dataDto.setSource(from.toUpperCase());
+        dataDto.setDestination(to.toUpperCase());
+        dataDto.setAmount((this.getAll(from.toUpperCase(),to.toUpperCase()).getConversion_rate())* amount);
         return dataDto;
     }
 }

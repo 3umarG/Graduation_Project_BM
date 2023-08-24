@@ -17,7 +17,7 @@ public class CurrencyController {
         this.service=service;
     }
     @GetMapping("/conversion")
-    public DataDto convertOrCompare(@RequestParam("from") String from
+    public ConversionDto convertOrCompare(@RequestParam("from") String from
                                 ,@RequestParam("to1") String to1
                                 ,@RequestParam("to2") String to2
                                 ,@RequestParam("amount") Double amount)

@@ -1,10 +1,13 @@
 package com.bm.graduationproject.controllers;
 
 import com.bm.graduationproject.dtos.ConversionResponseDto;
+import com.bm.graduationproject.dtos.CurrencyResponseDto;
 import com.bm.graduationproject.services.BaseCurrencyService;
 import com.bm.graduationproject.services.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/currency")
@@ -22,5 +25,10 @@ public class CurrencyController {
                                 , @RequestParam("amount") Double amount)
     {
         return this.service.convert(from,to1,amount);
+    }
+
+    @GetMapping()
+    public List<CurrencyResponseDto> getAllCurrencies(){
+        return service.getAllCurrencies();
     }
 }

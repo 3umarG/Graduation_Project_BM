@@ -11,13 +11,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class FavoritesResponseDto {
-    //     "base": "KWD",
-//    "destinations" : [
-//		{
-//			"code" : "EGP",
-//			"country" : "Egyption Pound",
-//			"imageUrl" : ".....",
-//			"rate" : 100.5566
     private String base;
     private List<CurrencyResponseDto> currencies;
 }

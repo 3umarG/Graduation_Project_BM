@@ -4,7 +4,7 @@ package com.bm.graduationproject.services;
 import com.bm.graduationproject.dtos.CompareResponseDto;
 import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.dtos.CurrencyResponseDto;
-import com.bm.graduationproject.enums.Currency;
+import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.bm.graduationproject.enums;
+package com.bm.graduationproject.models.enums;
 
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ public enum Currency {
     QAR("QATARI Riyal","https://flagcdn.com/w40/qa.png"),
     SAR("Saudi Riyal","https://flagcdn.com/w40/sa.png");
 
-    private String country;
+    private final String country;
     private String flagImageUrl;
 
     Currency(String country, String flagImageUrl) {

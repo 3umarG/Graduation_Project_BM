@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "currency", url = "${base_url}")
 public interface CurrencyRepository {
 
-    @GetMapping("/pair/{fromCurrency}/{toCurrency}")
+    @GetMapping("/pair/{fromCurrency}/{toCurrency}/{amount}")
     ConversionOpenApiResponse getCurrencyPair(@PathVariable("fromCurrency") String fromCurrency,
-                                              @PathVariable("toCurrency") String toCurrency);
+                                              @PathVariable("toCurrency") String toCurrency,
+                                              @PathVariable("amount") Double amount);
 }

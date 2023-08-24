@@ -18,5 +18,6 @@ public class ConversionOpenApiResponse {
     String time_next_update_utc;
     String base_code;
     String target_code;
-    double conversion_rate;
+    Double conversion_rate;
+    Double conversion_result;
 }

@@ -1,6 +1,6 @@
 package com.bm.graduationproject.services;
 
-import com.bm.graduationproject.dtos.ConversionDto;
+import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.models.ConversionOpenApiResponse;
 import com.bm.graduationproject.repositories.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,13 @@ public class CurrencyService implements BaseCurrencyService {
     }
 
     @Override
-    public ConversionOpenApiResponse getAll(String from, String to) {
-        return repository.getCurrencyPair(from,to);
-    }
-    @Override
-    public ConversionDto convert(String from, String to, double amount){
-        ConversionDto dataDto = new ConversionDto();
+    public ConversionResponseDto convert(String from, String to, double amount){
+        ConversionOpenApiResponse apiResponse = repository.getCurrencyPair(from,to);
+
+        ConversionResponseDto dataDto = new ConversionResponseDto();
         dataDto.setSource(from.toUpperCase());
         dataDto.setDestination(to.toUpperCase());
-        dataDto.setAmount((this.getAll(from.toUpperCase(),to.toUpperCase()).getConversion_rate())* amount);
+        dataDto.setAmount(apiResponse.getConversion_rate()*amount);
         return dataDto;
     }
 }

@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Data {
+public class ConversionOpenApiResponse {
     String result;
     String documentation;
     String terms_of_use;

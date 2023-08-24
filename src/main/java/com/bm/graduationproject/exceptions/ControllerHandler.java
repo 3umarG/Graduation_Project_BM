@@ -1,6 +1,6 @@
 package com.bm.graduationproject.exceptions;
 
-import com.bm.graduationproject.models.ApiCustomResponse;
+import com.bm.graduationproject.web.response.ApiCustomResponse;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;

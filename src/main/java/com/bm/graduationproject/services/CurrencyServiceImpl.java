@@ -4,8 +4,8 @@ import com.bm.graduationproject.dtos.CompareResponseDto;
 import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.dtos.CurrencyResponseDto;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
-import com.bm.graduationproject.enums.Currency;
-import com.bm.graduationproject.models.ConversionOpenApiResponse;
+import com.bm.graduationproject.models.enums.Currency;
+import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.repositories.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class CurrencyServiceImp implements CurrencyService {
+public class CurrencyServiceImpl implements CurrencyService {
 
     private final CurrencyRepository repository;
 
     @Autowired
-    public CurrencyServiceImp(CurrencyRepository repository) {
+    public CurrencyServiceImpl(CurrencyRepository repository) {
         this.repository = repository;
     }
 
@@ -69,7 +69,7 @@ public class CurrencyServiceImp implements CurrencyService {
 
     @Override
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
-        String base = Currency.valueOf(baseCurrency.name().toUpperCase()).name();
+        String base = baseCurrency.name();
         List<CurrencyResponseDto> currencies = new ArrayList<>();
         ExchangeRateOpenApiResponseDto exchangeRateDto = repository.getExchangeRate(baseCurrency.name());
         Map<String, Double> currencies_rate = exchangeRateDto.getConversion_rates();

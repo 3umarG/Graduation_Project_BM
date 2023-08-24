@@ -1,7 +1,7 @@
 package com.bm.graduationproject.repositories;
 
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
-import com.bm.graduationproject.models.ConversionOpenApiResponse;
+import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

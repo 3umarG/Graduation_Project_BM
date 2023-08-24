@@ -1,11 +1,11 @@
-package com.bm.graduationproject.controllers;
+package com.bm.graduationproject.web.controllers;
 
 import com.bm.graduationproject.dtos.CurrencyResponseDto;
-import com.bm.graduationproject.enums.Currency;
-import com.bm.graduationproject.models.ApiCustomResponse;
+import com.bm.graduationproject.models.enums.Currency;
+import com.bm.graduationproject.web.response.ApiCustomResponse;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.services.CurrencyService;
-import com.bm.graduationproject.services.CurrencyServiceImp;
+import com.bm.graduationproject.services.CurrencyServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ public class CurrencyController {
     private CurrencyService service;
 
     @Autowired
-    public CurrencyController(CurrencyServiceImp service) {
+    public CurrencyController(CurrencyServiceImpl service) {
         this.service = service;
     }
 

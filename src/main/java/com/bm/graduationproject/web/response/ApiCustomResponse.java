@@ -1,4 +1,4 @@
-package com.bm.graduationproject.models;
+package com.bm.graduationproject.web.response;
 
 import lombok.Builder;
 import lombok.Data;

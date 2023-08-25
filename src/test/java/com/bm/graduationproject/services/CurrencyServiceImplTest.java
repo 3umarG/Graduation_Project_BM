@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.concurrent.TimeoutException;
+
 @SpringBootTest
 class CurrencyServiceImplTest{
 
 
     @Test
-    public void testConvert() {
+    public void testConvert() throws TimeoutException {
         CurrencyRepository repository = Mockito.mock(CurrencyRepository.class);
         CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository);
 

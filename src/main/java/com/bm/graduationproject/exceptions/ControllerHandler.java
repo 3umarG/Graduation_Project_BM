@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.concurrent.TimeoutException;
+
 @ControllerAdvice
 @ResponseBody
 public class ControllerHandler {
@@ -23,7 +25,7 @@ public class ControllerHandler {
         return ApiCustomResponse.builder()
                 .isSuccess(false)
                 .message("Please Enter valid currency name.")
-                .statusCode(400)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .build();
 
     }
@@ -38,7 +40,7 @@ public class ControllerHandler {
         return ApiCustomResponse.builder()
                 .isSuccess(false)
                 .message("Please Enter valid currency name.")
-                .statusCode(400)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .build();
     }
 
@@ -51,7 +53,22 @@ public class ControllerHandler {
         return ApiCustomResponse.builder()
                 .isSuccess(false)
                 .message(e.getMessage())
-                .statusCode(400)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+
+    @ExceptionHandler(TimeoutException.class)
+    @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+    public ApiCustomResponse<?> handleTimeoutException(
+            TimeoutException e,
+            WebRequest request
+    ){
+
+        return ApiCustomResponse.builder()
+                .isSuccess(false)
+                .message("The request timed out. Please try again later.")
+                .statusCode(HttpStatus.GATEWAY_TIMEOUT.value())
+                .data(null)
                 .build();
     }
 }

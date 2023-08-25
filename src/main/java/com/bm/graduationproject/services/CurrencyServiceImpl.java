@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@CacheConfig(cacheNames={"currencies"})
+@CacheConfig(cacheNames = {"currencies"})
 public class CurrencyServiceImpl implements CurrencyService {
 
     private final CurrencyRepository repository;

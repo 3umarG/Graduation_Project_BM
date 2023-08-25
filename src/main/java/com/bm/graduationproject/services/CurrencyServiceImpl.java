@@ -11,6 +11,8 @@ import com.bm.graduationproject.repositories.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +49,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @CachePut
+    @Cacheable
     @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
     public List<CurrencyResponseDto> getAllCurrencies() {
         return Arrays.stream(Currency.values())

@@ -42,7 +42,6 @@
 
 ### Open APIs used:
 - https://exchangeratesapi.io/documentation/
-- https://xecdapi.xe.com/docs/v1/
 
 ### APIs Contracts
 
@@ -62,7 +61,13 @@ to make a contract between us as Backend side and Frontend/IOS/Android side to u
 ### Swagger Documentation :
 
 [//]: # (Will Add swagger documenation link)
-Will added later ...
+```Java
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.0.3</version>
+    </dependency>
+```
 
 ## Architecture of Currency Conversion API
 

@@ -9,6 +9,11 @@ import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.repositories.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@CacheConfig(cacheNames={"currencies"})
 public class CurrencyServiceImpl implements CurrencyService {
 
     private final CurrencyRepository repository;
@@ -28,6 +34,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @CachePut
+    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
     public ConversionResponseDto convert(String from, String to, double amount) {
         ConversionOpenApiResponse apiResponse = repository.getCurrencyPair(from, to, amount);
 
@@ -41,6 +49,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @Cacheable
+    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
     public List<CurrencyResponseDto> getAllCurrencies() {
         return Arrays.stream(Currency.values())
                 .map(c -> new CurrencyResponseDto(c.name(), c.getCountry(), c.getFlagImageUrl(), null))
@@ -48,6 +58,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @CachePut
+    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
     public CompareResponseDto compare(String src, String des1, String des2, Double amount) {
         ConversionOpenApiResponse firstConvert = repository.getCurrencyPair(src, des1, amount);
         ConversionOpenApiResponse secondConvert = repository.getCurrencyPair(src, des2, amount);
@@ -68,6 +80,8 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
     @Override
+    @CachePut(cacheNames = "favoriteCurrencies")
+    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
         String base = baseCurrency.name();
         List<CurrencyResponseDto> currencies = new ArrayList<>();

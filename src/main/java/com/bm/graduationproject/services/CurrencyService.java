@@ -8,10 +8,11 @@ import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public interface CurrencyService {
 
-    ConversionResponseDto convert(String from, String to, double amount);
+    ConversionResponseDto convert(String from, String to, double amount) throws TimeoutException;
 
     List<CurrencyResponseDto> getAllCurrencies();
 

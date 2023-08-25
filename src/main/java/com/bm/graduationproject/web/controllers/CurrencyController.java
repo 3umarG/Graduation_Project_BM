@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 @RestController
 @Validated
@@ -30,7 +31,7 @@ public class CurrencyController {
     public ResponseEntity<ApiCustomResponse<?>> convertOrCompare(@RequestParam("from") Currency from
             , @RequestParam("to1") Currency to1
             , @RequestParam(value = "to2", required = false) Currency to2
-            , @RequestParam("amount") @Min(1) Double amount) {
+            , @RequestParam("amount") @Min(1) Double amount) throws TimeoutException {
         if (amount<=0)
             throw new NotValidAmountException("Amount must be greater than Zero");
         return ResponseEntity.ok(ApiCustomResponse.builder()

@@ -71,6 +71,32 @@ public class CurrencyControllerTests {
                 .andExpect(content().json(expectedResponse));
     }
 
+    @Test
+    public void convertOrCompare_negativeAmount_return_BAD_REQUEST_Response() throws Exception {
+        // Arrange
+        String uri = "/api/v1/currency/conversion";
+        ApiCustomResponse<?> response = ApiCustomResponse.builder()
+                .isSuccess(false)
+                .message("Amount must be greater than Zero")
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+
+        // Act
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedResponse = mapper.writeValueAsString(response).replace(",\"data\":null", "");
+
+
+        // Assert
+        mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                        .param("from", "KWD")
+                        .param("to1", "USD")
+                        .param("amount", String.valueOf(-2.0)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(expectedResponse));
+    }
+
 
     @Test
     public void compare_timeoutException_returnGATEWAY_TIMEOUT_Response() throws Exception {

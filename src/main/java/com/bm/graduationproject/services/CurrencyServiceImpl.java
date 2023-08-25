@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @CachePut
-    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
+    @Scheduled(fixedRateString = "${caching.spring.TTL}")
     public ConversionResponseDto convert(String from, String to, double amount) {
         ConversionOpenApiResponse apiResponse = repository.getCurrencyPair(from, to, amount);
 
@@ -50,7 +49,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @Cacheable
-    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
+    @Scheduled(fixedRateString = "${caching.spring.TTL}")
     public List<CurrencyResponseDto> getAllCurrencies() {
         return Arrays.stream(Currency.values())
                 .map(c -> new CurrencyResponseDto(c.name(), c.getCountry(), c.getFlagImageUrl(), null))
@@ -59,7 +58,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @CachePut
-    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
+    @Scheduled(fixedRateString = "${caching.spring.TTL}")
     public CompareResponseDto compare(String src, String des1, String des2, Double amount) {
         ConversionOpenApiResponse firstConvert = repository.getCurrencyPair(src, des1, amount);
         ConversionOpenApiResponse secondConvert = repository.getCurrencyPair(src, des2, amount);
@@ -81,7 +80,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @CachePut(cacheNames = "favoriteCurrencies")
-    @Scheduled(fixedRateString = "${caching.spring.hotelListTTL}")
+    @Scheduled(fixedRateString = "${caching.spring.TTL}")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
         String base = baseCurrency.name();
         List<CurrencyResponseDto> currencies = new ArrayList<>();

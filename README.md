@@ -27,13 +27,20 @@
             <optional>true</optional>
     </dependency>
     ```
+  - Swagger
+    ```Java
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.0.3</version>
+    </dependency>
+    ```
     
 ****
 
 ### Project UML Diagram
 
-[//]: # (![img.png]&#40;img.png&#41;)
-![img_1.png](img_1.png)
+![img.png](img.png)
 
 - **CurrencyRepository**: will contain all method for calling the OpenApi for currency conversion using `FeignClient`.
 - **BaseCurrencyService** : interface for creating a template for defining methods for dealing with `CurrencyRepository`.
@@ -61,13 +68,7 @@ to make a contract between us as Backend side and Frontend/IOS/Android side to u
 ### Swagger Documentation :
 
 [//]: # (Will Add swagger documenation link)
-```Java
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>2.0.3</version>
-    </dependency>
-```
+
 
 ## Architecture of Currency Conversion API
 

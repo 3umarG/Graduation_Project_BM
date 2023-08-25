@@ -24,9 +24,9 @@ public class CurrencyController {
 
     @GetMapping("/conversion")
     public ResponseEntity<ApiCustomResponse<?>> convertOrCompare(@RequestParam("from") Currency from
-            , @RequestParam("to1") Currency to1
-            , @RequestParam(value = "to2", required = false) Currency to2
-            , @RequestParam("amount") Double amount) {
+                                                               , @RequestParam("to1") Currency to1
+                                                               , @RequestParam(value = "to2", required = false) Currency to2
+                                                               , @RequestParam("amount") Double amount) {
         return ResponseEntity.ok(ApiCustomResponse.builder()
                 .statusCode(200)
                 .isSuccess(true)

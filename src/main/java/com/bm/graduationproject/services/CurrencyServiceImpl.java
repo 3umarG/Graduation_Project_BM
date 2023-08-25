@@ -38,13 +38,13 @@ public class CurrencyServiceImpl implements CurrencyService {
     public ConversionResponseDto convert(String from, String to, double amount) {
         ConversionOpenApiResponse apiResponse = repository.getCurrencyPair(from, to, amount);
 
-        ConversionResponseDto dataDto = new ConversionResponseDto();
-        dataDto.setSource(from.toUpperCase());
-        dataDto.setDestination(to.toUpperCase());
-        dataDto.setAmount(apiResponse.getConversion_result() == null
+        ConversionResponseDto conversionResponseDto = new ConversionResponseDto();
+        conversionResponseDto.setSource(from.toUpperCase());
+        conversionResponseDto.setDestination(to.toUpperCase());
+        conversionResponseDto.setAmount(apiResponse.getConversion_result() == null
                 ? apiResponse.getConversion_rate()
                 : apiResponse.getConversion_result());
-        return dataDto;
+        return conversionResponseDto;
     }
 
     @Override

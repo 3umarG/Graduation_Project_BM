@@ -41,4 +41,17 @@ public class ControllerHandler {
                 .statusCode(400)
                 .build();
     }
+
+    @ExceptionHandler(NotValidAmountException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiCustomResponse<?> handleNegativeAmountException(
+            NotValidAmountException e,
+            WebRequest request
+    ){
+        return ApiCustomResponse.builder()
+                .isSuccess(false)
+                .message(e.getMessage())
+                .statusCode(400)
+                .build();
+    }
 }

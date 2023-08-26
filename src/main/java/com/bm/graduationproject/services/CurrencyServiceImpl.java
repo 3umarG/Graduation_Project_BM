@@ -99,4 +99,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         return currencyRate.entrySet().stream().filter(c -> c.getKey().equals(fav.toUpperCase()))
                 .map(Map.Entry::getValue).toList().get(0);
     }
+    public Double getCurrencyValue(String base,String fav) {
+        return convert(base,fav, 1).getAmount();
+    }
 }

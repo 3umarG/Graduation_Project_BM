@@ -20,4 +20,6 @@ public interface CurrencyService {
 
     FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites);
 
+    Double getCurrencyValue(String base,String fav);
+
 }

@@ -3,11 +3,13 @@ import com.bm.graduationproject.config.CachingConfig;
 import com.bm.graduationproject.dtos.CompareResponseDto;
 import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
+import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.repositories.CurrencyRepository;
 import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -88,6 +90,31 @@ class CurrencyServiceImplTest {
         Assertions.assertEquals(46.5, result.getAmount1());
         Assertions.assertEquals("EUR", result.getDestination1());
         Assertions.assertEquals("KWD", result.getDestination2());
+    }
+    @Test
+    public void testGetExchangeRate() {
+        //Arrange
+        Currency baseCurrency = Currency.SAR;
+        List<Currency> favourites = new ArrayList<>();
+        favourites.add(Currency.KWD);
+        favourites.add(Currency.AED);
+        favourites.add(Currency.EUR);
+        Map<String, Double> currencies_rates = new HashMap<>();
+        favourites.forEach(f-> currencies_rates.put(f.name(), 0.082));
+        ExchangeRateOpenApiResponseDto exchangeRateOpenApiResponseDto =
+                ExchangeRateOpenApiResponseDto.builder().result("success")
+                        .base_code(baseCurrency.name()).conversion_rates(currencies_rates).build();
+        //Act
+        when(currencyRepository.getExchangeRate(Mockito.anyString())).thenReturn(exchangeRateOpenApiResponseDto);
+        FavoritesResponseDto favoritesResponseDto = currencyService.getExchangeRate(baseCurrency, favourites);
+        //Assert
+        Assertions.assertNotEquals(favoritesResponseDto, null);
+        Assertions.assertEquals(favoritesResponseDto.getCurrencies().size(), 3);
+        favoritesResponseDto.getCurrencies().forEach(f-> {
+            List<Currency> currency = new ArrayList<>();
+            currency.add(Currency.valueOf(f.code()));
+            Assertions.assertEquals(f, currencyService.getExchangeRate(baseCurrency, currency).getCurrencies().get(0));
+        });
     }
 
 

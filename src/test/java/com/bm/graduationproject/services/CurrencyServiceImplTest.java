@@ -9,9 +9,7 @@ import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.repositories.CurrencyRepository;
 import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +27,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -124,11 +121,8 @@ class CurrencyServiceImplTest {
         //Assert
         Assertions.assertNotEquals(favoritesResponseDto, null);
         Assertions.assertEquals(favoritesResponseDto.getCurrencies().size(), 3);
-        favoritesResponseDto.getCurrencies().forEach(f-> {
-            List<Currency> currency = new ArrayList<>();
-            currency.add(Currency.valueOf(f.code()));
-            Assertions.assertEquals(f, currencyService.getExchangeRate(baseCurrency, currency).getCurrencies().get(0));
-        });
+        assertEquals(favoritesResponseDto.getCurrencies(),
+                currencyService.getExchangeRate(baseCurrency, favourites).getCurrencies());
     }
 
 

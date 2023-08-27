@@ -33,7 +33,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable("conversionCache")
+    @Cacheable(value = "conversionCache", key = "#from + '-' + #to + '-' + #amount")
     public ConversionResponseDto convert(String from, String to, double amount) {
         ConversionOpenApiResponse apiResponse = repository.getCurrencyPair(from, to, amount);
 
@@ -54,7 +54,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable("compareCache")
+    @Cacheable(
+            value = "compareCache",
+            key = "#src + '-' + #des1 + '-' + #des2 + '-' + #amount")
     public CompareResponseDto compare(String src, String des1, String des2, Double amount) {
         ConversionOpenApiResponse firstConvert = repository.getCurrencyPair(src, des1, amount);
         ConversionOpenApiResponse secondConvert = repository.getCurrencyPair(src, des2, amount);
@@ -75,7 +77,9 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
     @Override
-    @Cacheable("exchangeRateCache")
+    @Cacheable(
+            value = "exchangeRateCache",
+            key ="#baseCurrency.name() + '-' + T(String).join(#favourites.toString())")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
         String base = baseCurrency.name();
         List<CurrencyResponseDto> currencies = new ArrayList<>();
@@ -98,5 +102,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     private Double getCurrencyValue(Map<String, Double> currencyRate, String fav) {
         return currencyRate.entrySet().stream().filter(c -> c.getKey().equals(fav.toUpperCase()))
                 .map(Map.Entry::getValue).toList().get(0);
+    }
+
+    public Double getCurrencyValue(String base, String fav) {
+        return convert(base, fav, 1).getAmount();
     }
 }

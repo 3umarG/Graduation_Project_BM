@@ -1,9 +1,11 @@
 package com.bm.graduationproject.services;
+
 import com.bm.graduationproject.config.CachingConfig;
 import com.bm.graduationproject.dtos.CompareResponseDto;
 import com.bm.graduationproject.dtos.ConversionResponseDto;
 import com.bm.graduationproject.dtos.CurrencyResponseDto;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
+import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.repositories.CurrencyRepository;
 import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.Cache;
@@ -18,21 +21,30 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @EnableCaching
 @Import(CachingConfig.class)
+@ActiveProfiles("test")
 class CurrencyServiceImplTest {
+
+
+    @Value("${expire_after_duration}")
+    private long expireAfterDuration;
+
+    @Value("${expire_after_time_unit}")
+    private String expireAfterTimeUnit;
 
     @Autowired
     private CurrencyService currencyService;
@@ -81,7 +93,7 @@ class CurrencyServiceImplTest {
         apiResponse2.setConversion_result(15.5);
 
         when(repository.getCurrencyPair(Mockito.anyString(), Mockito.anyString(), Mockito.anyDouble()))
-                .thenReturn(apiResponse1,apiResponse2);
+                .thenReturn(apiResponse1, apiResponse2);
 
         CompareResponseDto result = currencyService.compare("USD", "EUR", "KWD", 50.0);
 
@@ -92,21 +104,44 @@ class CurrencyServiceImplTest {
         Assertions.assertEquals("KWD", result.getDestination2());
     }
 
+    @Test
+    public void testGetExchangeRate() {
+        //Arrange
+        Currency baseCurrency = Currency.SAR;
+        List<Currency> favourites = new ArrayList<>();
+        favourites.add(Currency.KWD);
+        favourites.add(Currency.AED);
+        favourites.add(Currency.EUR);
+        Map<String, Double> currencies_rates = new HashMap<>();
+        favourites.forEach(f -> currencies_rates.put(f.name(), 0.082));
+        ExchangeRateOpenApiResponseDto exchangeRateOpenApiResponseDto =
+                ExchangeRateOpenApiResponseDto.builder().result("success")
+                        .base_code(baseCurrency.name()).conversion_rates(currencies_rates).build();
+        //Act
+        when(currencyRepository.getExchangeRate(Mockito.anyString())).thenReturn(exchangeRateOpenApiResponseDto);
+        FavoritesResponseDto favoritesResponseDto = currencyService.getExchangeRate(baseCurrency, favourites);
+        //Assert
+        Assertions.assertNotEquals(favoritesResponseDto, null);
+        Assertions.assertEquals(favoritesResponseDto.getCurrencies().size(), 3);
+        assertEquals(favoritesResponseDto.getCurrencies(),
+                currencyService.getExchangeRate(baseCurrency, favourites).getCurrencies());
+    }
+
 
     @Test
     public void convert_testCacheBehavior() throws TimeoutException {
 
         // Arrange
         cache = cacheManager.getCache("conversionCache");
-        when(currencyRepository.getCurrencyPair(any(),any(),any())).thenReturn(ConversionOpenApiResponse.builder()
-                        .base_code("KWD")
-                        .target_code("USD")
-                        .conversion_rate(105.0)
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+                .base_code("KWD")
+                .target_code("USD")
+                .conversion_rate(105.0)
                 .build());
 
         // Act
-        currencyService.convert("KWD","USD",10.0);
-        currencyService.convert("KWD","USD",10.0);
+        currencyService.convert("KWD", "USD", 10.0);
+        currencyService.convert("KWD", "USD", 10.0);
 
         // Assert
         //  that the repository method has only ONE call
@@ -120,17 +155,17 @@ class CurrencyServiceImplTest {
 
         // Arrange
         cache = cacheManager.getCache("compareCache");
-        when(currencyRepository.getCurrencyPair(any(),any(),any())).thenReturn(ConversionOpenApiResponse.builder()
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
                 .base_code("KWD")
                 .target_code("USD")
                 .conversion_rate(105.0)
                 .build());
 
         // Act
-        currencyService.compare("KWD","USD","EUR",10.0);
-        currencyService.compare("KWD","USD","EUR",10.0);
-        currencyService.compare("KWD","USD","EUR",10.0);
-        currencyService.compare("KWD","USD","EUR",10.0);
+        currencyService.compare("KWD", "USD", "EUR", 10.0);
+        currencyService.compare("KWD", "USD", "EUR", 10.0);
+        currencyService.compare("KWD", "USD", "EUR", 10.0);
+        currencyService.compare("KWD", "USD", "EUR", 10.0);
 
 
         // Assert
@@ -143,16 +178,16 @@ class CurrencyServiceImplTest {
 
 
     @Test
-    public void getExchangeRate_testCacheBehavior(){
+    public void getExchangeRate_testCacheBehavior() {
 
         // Arrange
         cache = cacheManager.getCache("exchangeRateCache");
 
         Map<String, Double> allCurrenciesRatesFromRepository = new HashMap<>();
 
-        allCurrenciesRatesFromRepository.put("USD",10.0);
+        allCurrenciesRatesFromRepository.put("USD", 10.0);
 
-        allCurrenciesRatesFromRepository.put("KWD",10.0);
+        allCurrenciesRatesFromRepository.put("KWD", 10.0);
 
         when(currencyRepository.getExchangeRate("AED"))
                 .thenReturn(ExchangeRateOpenApiResponseDto.builder()
@@ -160,17 +195,16 @@ class CurrencyServiceImplTest {
                         .conversion_rates(allCurrenciesRatesFromRepository)
                         .build());
 
-        List<Currency> favs= new ArrayList<>();
+        List<Currency> favs = new ArrayList<>();
         favs.add(Currency.USD);
         favs.add(Currency.KWD);
 
 
         // Act
-        currencyService.getExchangeRate(Currency.AED,favs);
-        currencyService.getExchangeRate(Currency.AED,favs);
-        currencyService.getExchangeRate(Currency.AED,favs);
-        currencyService.getExchangeRate(Currency.AED,favs);
-
+        currencyService.getExchangeRate(Currency.AED, favs);
+        currencyService.getExchangeRate(Currency.AED, favs);
+        currencyService.getExchangeRate(Currency.AED, favs);
+        currencyService.getExchangeRate(Currency.AED, favs);
 
 
         // Assert
@@ -179,6 +213,7 @@ class CurrencyServiceImplTest {
         verify(currencyRepository, times(1)).getExchangeRate(any());
 
     }
+
     @Test
     public void testgetAllCurrencies() {
 
@@ -198,6 +233,102 @@ class CurrencyServiceImplTest {
 
         Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
         Assertions.assertEquals(actualResponse, expectedResponse);
+
+
+    @Test
+    public void convert_testCacheExpiration() throws TimeoutException,
+            InterruptedException {
+        // Arrange
+        String from = "KWD";
+        String to = "USD";
+        double amount = 10.5;
+        cache = cacheManager.getCache("conversionCache");
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+                .base_code(from)
+                .target_code(to)
+                .conversion_rate(amount)
+                .build());
+
+
+        // Act
+        currencyService.convert(from, to, amount);
+
+        // Assert with the first call:before expiration
+        // #from-#to-#amount
+        String cacheKey = from + '-' + to + '-' + amount;
+        assertNotNull(cache.get(cacheKey));
+
+        // Wait for cache expiration
+        TimeUnit.valueOf(expireAfterTimeUnit).sleep(expireAfterDuration);
+
+        // Assert second time after the expiration
+        assertNull(cache.get(cacheKey));
+    }
+
+
+    @Test
+    public void compare_testCacheExpiration() throws InterruptedException {
+        // Arrange
+        String src = "KWD";
+        String des1 = "USD";
+        String des2 = "EUR";
+        Double amount = 10.5;
+        cache = cacheManager.getCache("compareCache");
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+                .base_code("KWD")
+                .target_code("USD")
+                .conversion_rate(10.5)
+                .build());
+
+
+        // Act
+        currencyService.compare(src, des1, des2, amount);
+
+        // Assert with the first call:before expiration
+        // #from-#to-#amount
+        String cacheKey = src + '-' + des1 + '-' + des2 + '-' + amount;
+        assertNotNull(cache.get(cacheKey));
+
+        // Wait for cache expiration
+        TimeUnit.valueOf(expireAfterTimeUnit).sleep(expireAfterDuration);
+
+        // Assert second time after the expiration
+        assertNull(cache.get(cacheKey));
+    }
+
+
+    @Test
+    public void getFavoritesRates_testCacheExpiration() throws InterruptedException {
+        // Arrange
+        Currency base = Currency.EUR;
+
+        List<Currency> favs = Arrays.asList(Currency.USD, Currency.KWD);
+
+        Map<String, Double> allCurrenciesRatesFromRepository = new HashMap<>();
+        allCurrenciesRatesFromRepository.put("USD", 10.0);
+        allCurrenciesRatesFromRepository.put("KWD", 10.0);
+
+        cache = cacheManager.getCache("exchangeRateCache");
+        when(currencyRepository.getExchangeRate(any())).thenReturn(
+                ExchangeRateOpenApiResponseDto.builder()
+                        .base_code(base.name())
+                        .conversion_rates(allCurrenciesRatesFromRepository)
+                        .build());
+
+
+        String listId = String.join(favs.toString());
+
+        // Act
+        currencyService.getExchangeRate(base, favs);
+
+        // Assert with the first call:before expiration
+        assertNotNull(cache.get(base.name() + '-' + listId));
+
+        // Wait for cache expiration
+        TimeUnit.valueOf(expireAfterTimeUnit).sleep(expireAfterDuration);
+
+        // Assert second time after the expiration
+        assertNull(cache.get(base.name() + '-' + listId));
 
     }
 }

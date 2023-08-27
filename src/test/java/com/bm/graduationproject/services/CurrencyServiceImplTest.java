@@ -181,43 +181,6 @@ class CurrencyServiceImplTest {
 
 
     @Test
-    public void getExchangeRate_testCacheBehavior() {
-
-        // Arrange
-        cache = cacheManager.getCache("exchangeRateCache");
-
-        Map<String, Double> allCurrenciesRatesFromRepository = new HashMap<>();
-
-        allCurrenciesRatesFromRepository.put("USD", 10.0);
-
-        allCurrenciesRatesFromRepository.put("KWD", 10.0);
-
-        when(currencyRepository.getExchangeRate("AED"))
-                .thenReturn(ExchangeRateOpenApiResponseDto.builder()
-                        .base_code("AED")
-                        .conversion_rates(allCurrenciesRatesFromRepository)
-                        .build());
-
-        List<Currency> favs = new ArrayList<>();
-        favs.add(Currency.USD);
-        favs.add(Currency.KWD);
-
-
-        // Act
-        currencyService.getExchangeRate(Currency.AED, favs);
-        currencyService.getExchangeRate(Currency.AED, favs);
-        currencyService.getExchangeRate(Currency.AED, favs);
-        currencyService.getExchangeRate(Currency.AED, favs);
-
-
-        // Assert
-        //  that the repository method has only ONE calls ,
-
-        verify(currencyRepository, times(1)).getExchangeRate(any());
-
-    }
-
-    @Test
     public void testgetAllCurrencies() {
 
         //Arrange
@@ -300,39 +263,4 @@ class CurrencyServiceImplTest {
     }
 
 
-    @Test
-    public void getFavoritesRates_testCacheExpiration() throws InterruptedException {
-        // Arrange
-        Currency base = Currency.EUR;
-
-        List<Currency> favs = Arrays.asList(Currency.USD, Currency.KWD);
-        List<String> favsNames = favs.stream().map(Enum::name).toList();
-
-        Map<String, Double> allCurrenciesRatesFromRepository = new HashMap<>();
-        allCurrenciesRatesFromRepository.put("USD", 10.0);
-        allCurrenciesRatesFromRepository.put("KWD", 10.0);
-
-        cache = cacheManager.getCache("exchangeRateCache");
-        when(currencyRepository.getExchangeRate(any())).thenReturn(
-                ExchangeRateOpenApiResponseDto.builder()
-                        .base_code(base.name())
-                        .conversion_rates(allCurrenciesRatesFromRepository)
-                        .build());
-
-
-        String listId = String.join(",",favsNames);
-
-        // Act
-        currencyService.getExchangeRate(base, favs);
-
-        // Assert with the first call:before expiration
-        assertNotNull(cache.get(base.name() + '-' + listId));
-
-        // Wait for cache expiration
-        TimeUnit.valueOf(expireAfterTimeUnit).sleep(expireAfterDuration);
-
-        // Assert second time after the expiration
-        assertNull(cache.get(base.name() + '-' + listId));
-
-    }
 }

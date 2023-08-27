@@ -95,4 +95,5 @@ public class CurrencyServiceImpl implements CurrencyService {
         ExchangeRateOpenApiResponseDto exchangeRateDto = repository.getExchangeRate(baseCurrency.name());
         return adapter.adapt(exchangeRateDto, baseCurrency, favourites);
     }
+
 }

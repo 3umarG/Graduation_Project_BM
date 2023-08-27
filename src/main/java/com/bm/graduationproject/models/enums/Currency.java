@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Currency {
+
     USD("US Dollar","https://flagcdn.com/w40/us.png"),
     EUR("EURO","https://api.exchangerate-api.com/flag-images/EU.gif"),
     GBP("Sterling Pound","https://flagcdn.com/w40/gb.png"),

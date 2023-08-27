@@ -26,10 +26,12 @@ import java.util.stream.Collectors;
 public class CurrencyServiceImpl implements CurrencyService {
 
     private final CurrencyRepository repository;
+    private final ExchangeRateAdapter adapter;
 
     @Autowired
-    public CurrencyServiceImpl(CurrencyRepository repository) {
+    public CurrencyServiceImpl(CurrencyRepository repository , ExchangeRateAdapter adapter) {
         this.repository = repository;
+        this.adapter = adapter;
     }
 
     @Override
@@ -81,30 +83,9 @@ public class CurrencyServiceImpl implements CurrencyService {
             value = "exchangeRateCache",
             key ="#baseCurrency.name() + '-' + T(String).join(#favourites.toString())")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
-        String base = baseCurrency.name();
-        List<CurrencyResponseDto> currencies = new ArrayList<>();
         ExchangeRateOpenApiResponseDto exchangeRateDto = repository.getExchangeRate(baseCurrency.name());
-        Map<String, Double> currencies_rate = exchangeRateDto.getConversion_rates();
-        favourites.forEach(f -> {
-            Double currencyRate = getCurrencyValue(currencies_rate, f.name());
-            Currency currency = Currency.valueOf(f.name());
-            CurrencyResponseDto currencyInfo = new CurrencyResponseDto(currency.name(), currency.getCountry(),
-                    currency.getFlagImageUrl(), currencyRate);
-            currencies.add(currencyInfo);
-        });
-
-        FavoritesResponseDto response = new FavoritesResponseDto();
-        response.setBase(base);
-        response.setCurrencies(currencies);
-        return response;
+        return adapter.adapt(exchangeRateDto, baseCurrency, favourites);
     }
 
-    private Double getCurrencyValue(Map<String, Double> currencyRate, String fav) {
-        return currencyRate.entrySet().stream().filter(c -> c.getKey().equals(fav.toUpperCase()))
-                .map(Map.Entry::getValue).toList().get(0);
-    }
 
-    public Double getCurrencyValue(String base, String fav) {
-        return convert(base, fav, 1).getAmount();
-    }
 }

@@ -47,6 +47,9 @@ class CurrencyServiceImplTest {
     @Autowired
     private CurrencyService currencyService;
 
+    @Autowired
+    private ExchangeRateAdapter adapter;
+
     @MockBean
     private CurrencyRepository currencyRepository;
 
@@ -58,7 +61,7 @@ class CurrencyServiceImplTest {
     @Test
     public void testConvert() throws TimeoutException {
         CurrencyRepository repository = Mockito.mock(CurrencyRepository.class);
-        CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository);
+        CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository,adapter);
 
         ConversionOpenApiResponse apiResponse = new ConversionOpenApiResponse();
 
@@ -79,7 +82,7 @@ class CurrencyServiceImplTest {
     @Test
     public void testcompare() {
         CurrencyRepository repository = Mockito.mock(CurrencyRepository.class);
-        CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository);
+        CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository,adapter);
 
         ConversionOpenApiResponse apiResponse1 = new ConversionOpenApiResponse();
         ConversionOpenApiResponse apiResponse2 = new ConversionOpenApiResponse();

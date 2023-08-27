@@ -13,7 +13,9 @@ public enum Currency {
     KWD("Kuwaiti Dinar","https://flagcdn.com/w40/kw.png"),
     OMR("Oman Riyal","https://flagcdn.com/w40/om.png"),
     QAR("QATARI Riyal","https://flagcdn.com/w40/qa.png"),
-    SAR("Saudi Riyal","https://flagcdn.com/w40/sa.png");
+    SAR("Saudi Riyal","https://flagcdn.com/w40/sa.png"),
+
+    EGP("Egyption Pound","https://flagcdn.com/w40/egp.png") ;
 
     private final String country;
     private String flagImageUrl;

@@ -3,6 +3,7 @@ package com.bm.graduationproject.services;
 import com.bm.graduationproject.config.CachingConfig;
 import com.bm.graduationproject.dtos.CompareResponseDto;
 import com.bm.graduationproject.dtos.ConversionResponseDto;
+import com.bm.graduationproject.dtos.CurrencyResponseDto;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.models.enums.Currency;
@@ -26,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -213,6 +215,27 @@ class CurrencyServiceImplTest {
     }
 
     @Test
+    public void testgetAllCurrencies() {
+
+        //Arrange
+        List<Currency> currencies = List.of(Currency.values());
+        List<CurrencyResponseDto> actualResponse = new ArrayList<>();
+        currencies.forEach(r->{
+            CurrencyResponseDto currencyResponseDto= new CurrencyResponseDto(r.name(),r.getCountry(),r.getFlagImageUrl(), null);
+            actualResponse.add(currencyResponseDto);
+
+        });
+
+        //Act
+        List<CurrencyResponseDto> expectedResponse = currencyService.getAllCurrencies();
+
+        //Assert
+
+        Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+        Assertions.assertEquals(actualResponse, expectedResponse);
+
+
+    @Test
     public void convert_testCacheExpiration() throws TimeoutException,
             InterruptedException {
         // Arrange
@@ -306,5 +329,6 @@ class CurrencyServiceImplTest {
 
         // Assert second time after the expiration
         assertNull(cache.get(base.name() + '-' + listId));
+
     }
 }

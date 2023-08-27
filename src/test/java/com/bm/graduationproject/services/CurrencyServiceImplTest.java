@@ -306,6 +306,7 @@ class CurrencyServiceImplTest {
         Currency base = Currency.EUR;
 
         List<Currency> favs = Arrays.asList(Currency.USD, Currency.KWD);
+        List<String> favsNames = favs.stream().map(Enum::name).toList();
 
         Map<String, Double> allCurrenciesRatesFromRepository = new HashMap<>();
         allCurrenciesRatesFromRepository.put("USD", 10.0);
@@ -319,7 +320,7 @@ class CurrencyServiceImplTest {
                         .build());
 
 
-        String listId = String.join(favs.toString());
+        String listId = String.join(",",favsNames);
 
         // Act
         currencyService.getExchangeRate(base, favs);

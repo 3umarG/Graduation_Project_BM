@@ -81,7 +81,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     @Cacheable(
             value = "exchangeRateCache",
-            key ="#baseCurrency.name() + '-' + T(String).join(#favourites.toString())")
+            key = "#baseCurrency.name() + '-' + @cachingService.concatEnumNames(#favourites)")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
         ExchangeRateOpenApiResponseDto exchangeRateDto = repository.getExchangeRate(baseCurrency.name());
         return adapter.adapt(exchangeRateDto, baseCurrency, favourites);

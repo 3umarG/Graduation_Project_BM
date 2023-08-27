@@ -19,7 +19,11 @@ import java.util.concurrent.TimeoutException;
 
 @RestController
 @Validated
-@CrossOrigin(origins = "*", maxAge=3600)
+@CrossOrigin(
+        origins = "https://graduationprojectbm-production.up.railway.app",
+        maxAge = 3600,
+        allowedHeaders = "*",
+        allowCredentials = "true")
 @RequestMapping("/api/v1/currency")
 public class CurrencyController {
     private CurrencyService service;

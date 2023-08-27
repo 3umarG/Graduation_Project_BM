@@ -263,7 +263,7 @@ public class CurrencyControllerTests {
     @Test
     public void getExchangeRate_invalidBaseCurrencyValue_return_BAD_REQUEST_response() throws Exception {
         // Arrange
-        String notValidCurrency = "EGP";
+        String notValidCurrency = "NOT_VALID";
         String uri = "/api/v1/currency";
         List<Currency> favs = new ArrayList<>();
         favs.add(Currency.USD);
@@ -295,7 +295,7 @@ public class CurrencyControllerTests {
         String validCurrencyName = "KWD";
         String uri = "/api/v1/currency";
         List<String> favs = new ArrayList<>();
-        favs.add("EGP"); // not valid currency name -not included in Currency enum-
+        favs.add("NOT_VALID"); // not valid currency name -not included in Currency enum-
         favs.add("USD");
 
         // Act

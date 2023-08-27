@@ -95,23 +95,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         logger.info("Getting the exchange rate:");
         String base = baseCurrency.name();
         logger.info("Base currency: " + base);
-        List<CurrencyResponseDto> currencies = new ArrayList<>();
         ExchangeRateOpenApiResponseDto exchangeRateDto = repository.getExchangeRate(baseCurrency.name());
         return adapter.adapt(exchangeRateDto, baseCurrency, favourites);
-        Map<String, Double> currencies_rate = exchangeRateDto.getConversion_rates();
-        favourites.forEach(f -> {
-            Double currencyRate = getCurrencyValue(currencies_rate, f.name());
-            Currency currency = Currency.valueOf(f.name());
-            logger.info(f.name() + " exchange rate is: " + currencyRate);
-            CurrencyResponseDto currencyInfo = new CurrencyResponseDto(currency.name(), currency.getCountry(),
-                    currency.getFlagImageUrl(), currencyRate);
-            currencies.add(currencyInfo);
-        });
-
-        FavoritesResponseDto response = new FavoritesResponseDto();
-        response.setBase(base);
-        response.setCurrencies(currencies);
-        return response;
     }
 
     private Double getCurrencyValue(Map<String, Double> currencyRate, String fav) {

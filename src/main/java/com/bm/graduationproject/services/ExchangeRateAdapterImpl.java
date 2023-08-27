@@ -4,6 +4,8 @@ import com.bm.graduationproject.dtos.CurrencyResponseDto;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
 import com.bm.graduationproject.models.FavoritesResponseDto;
 import com.bm.graduationproject.models.enums.Currency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 @Service
 public class ExchangeRateAdapterImpl implements ExchangeRateAdapter  {
+    private Logger logger = LoggerFactory.getLogger(ExchangeRateAdapterImpl.class);
 
     @Override
     public FavoritesResponseDto adapt(ExchangeRateOpenApiResponseDto apiResponse, Currency base, List<Currency> favorites) {
@@ -35,6 +38,7 @@ public class ExchangeRateAdapterImpl implements ExchangeRateAdapter  {
         favorites.forEach(f -> {
             Double currencyRate = getCurrencyValue(currencies_rate, f.name());
             Currency currency = Currency.valueOf(f.name());
+            logger.info(f.name() + " exchange rate is: " + currencyRate);
             CurrencyResponseDto currencyInfo = new CurrencyResponseDto(currency.name(), currency.getCountry(),
                     currency.getFlagImageUrl(), currencyRate);
             currencies.add(currencyInfo);

@@ -116,7 +116,13 @@ class CurrencyServiceImplTest {
         favourites.add(Currency.AED);
         favourites.add(Currency.EUR);
         Map<String, Double> currencies_rates = new HashMap<>();
-        favourites.forEach(f -> currencies_rates.put(f.name(), 0.082));
+        List<CurrencyResponseDto> favoriteCurrenciesList = new ArrayList<>();
+        favourites.forEach(f -> {
+            currencies_rates.put(f.name(), 0.082);
+            CurrencyResponseDto currencyResponseDto =
+                    new CurrencyResponseDto(f.name(), f.getCountry(),f.getFlagImageUrl(), 0.082);
+            favoriteCurrenciesList.add(currencyResponseDto);
+        });
         ExchangeRateOpenApiResponseDto exchangeRateOpenApiResponseDto =
                 ExchangeRateOpenApiResponseDto.builder().result("success")
                         .base_code(baseCurrency.name()).conversion_rates(currencies_rates).build();
@@ -124,10 +130,11 @@ class CurrencyServiceImplTest {
         when(currencyRepository.getExchangeRate(Mockito.anyString())).thenReturn(exchangeRateOpenApiResponseDto);
         FavoritesResponseDto favoritesResponseDto = currencyService.getExchangeRate(baseCurrency, favourites);
         //Assert
-        Assertions.assertNotEquals(favoritesResponseDto, null);
-        Assertions.assertEquals(favoritesResponseDto.getCurrencies().size(), 3);
-        assertEquals(favoritesResponseDto.getCurrencies(),
-                currencyService.getExchangeRate(baseCurrency, favourites).getCurrencies());
+        assertNotEquals(favoritesResponseDto, null);
+        assertEquals(favoritesResponseDto.getCurrencies().size(), 3);
+        assertEquals(favoritesResponseDto.getBase(), baseCurrency.name());
+        favoritesResponseDto.getCurrencies().forEach(f -> assertEquals(f.rate(), 0.082));
+        assertEquals(favoritesResponseDto.getCurrencies(), favoriteCurrenciesList);
     }
 
 

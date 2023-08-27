@@ -88,9 +88,6 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
     @Override
-    @Cacheable(
-            value = "exchangeRateCache",
-            key = "#baseCurrency.name() + '-' + @cachingService.concatEnumNames(#favourites)")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
         logger.info("Getting the exchange rate:");
         String base = baseCurrency.name();

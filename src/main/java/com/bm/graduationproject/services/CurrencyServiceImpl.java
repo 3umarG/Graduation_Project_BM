@@ -88,23 +88,11 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
     @Override
-    @Cacheable(
-            value = "exchangeRateCache",
-            key = "#baseCurrency.name() + '-' + @cachingService.concatEnumNames(#favourites)")
     public FavoritesResponseDto getExchangeRate(Currency baseCurrency, List<Currency> favourites) {
         logger.info("Getting the exchange rate:");
         String base = baseCurrency.name();
         logger.info("Base currency: " + base);
         ExchangeRateOpenApiResponseDto exchangeRateDto = repository.getExchangeRate(baseCurrency.name());
         return adapter.adapt(exchangeRateDto, baseCurrency, favourites);
-    }
-
-    private Double getCurrencyValue(Map<String, Double> currencyRate, String fav) {
-        return currencyRate.entrySet().stream().filter(c -> c.getKey().equals(fav.toUpperCase()))
-                .map(Map.Entry::getValue).toList().get(0);
-    }
-
-    public Double getCurrencyValue(String base, String fav) {
-        return convert(base, fav, 1).getAmount();
     }
 }

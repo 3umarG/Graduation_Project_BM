@@ -1,4 +1,4 @@
-package com.bm.graduationproject;
+package com.bm.graduationproject.controllers;
 
 import com.bm.graduationproject.dtos.CompareResponseDto;
 import com.bm.graduationproject.dtos.ConversionResponseDto;

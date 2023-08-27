@@ -223,8 +223,8 @@ class CurrencyServiceImplTest {
         //Arrange
         List<Currency> currencies = List.of(Currency.values());
         List<CurrencyResponseDto> actualResponse = new ArrayList<>();
-        currencies.forEach(r->{
-            CurrencyResponseDto currencyResponseDto= new CurrencyResponseDto(r.name(),r.getCountry(),r.getFlagImageUrl(), null);
+        currencies.forEach(r -> {
+            CurrencyResponseDto currencyResponseDto = new CurrencyResponseDto(r.name(), r.getCountry(), r.getFlagImageUrl(), null);
             actualResponse.add(currencyResponseDto);
 
         });
@@ -236,7 +236,7 @@ class CurrencyServiceImplTest {
 
         Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
         Assertions.assertEquals(actualResponse, expectedResponse);
-
+    }
 
     @Test
     public void convert_testCacheExpiration() throws TimeoutException,

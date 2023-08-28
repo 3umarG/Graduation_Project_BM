@@ -1,4 +1,4 @@
-package com.bm.graduationproject.dtos;
+package com.bm.graduationproject.web.response;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ConversionResponseDto {
+public class ConversionResponse {
     String source;
     String destination;
     double amount;

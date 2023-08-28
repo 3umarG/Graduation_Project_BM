@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients(basePackages = "com.bm.graduationproject.repositories")
 @EnableCaching
-@OpenAPIDefinition(servers = {@Server(url = "https://graduationprojectbm-production.up.railway.app", description = "any description of Server URL")})
+@OpenAPIDefinition(servers = {@Server(url = "https://graduationprojectbm.up.railway.app", description = "Graduation Project for Banque Misr API Contracts")})
 public class GraduationProjectApplication {
 
     public static void main(String[] args) {

@@ -44,9 +44,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         ConversionResponseDto conversionResponseDto = new ConversionResponseDto();
         conversionResponseDto.setSource(from.toUpperCase());
         conversionResponseDto.setDestination(to.toUpperCase());
-        conversionResponseDto.setAmount(apiResponse.getConversion_result() == null
-                ? apiResponse.getConversion_rate()
-                : apiResponse.getConversion_result());
+        conversionResponseDto.setAmount(apiResponse.getConversion_result());
         logger.info("Conversion completed successfully");
         logger.info("The result is: " + apiResponse.getConversion_result() +" " + to);
         return conversionResponseDto;
@@ -76,12 +74,8 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .source(src)
                 .destination1(firstConvert.getTarget_code())
                 .destination2(secondConvert.getTarget_code())
-                .amount1(firstConvert.getConversion_result() == null
-                        ? firstConvert.getConversion_rate()
-                        : firstConvert.getConversion_result())
-                .amount2(secondConvert.getConversion_result() == null
-                        ? secondConvert.getConversion_rate()
-                        : secondConvert.getConversion_result())
+                .amount1(firstConvert.getConversion_result())
+                .amount2(secondConvert.getConversion_result())
                 .build();
 
     }

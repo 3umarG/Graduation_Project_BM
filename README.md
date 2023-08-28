@@ -71,10 +71,9 @@ to make a contract between us as Backend side and Frontend/IOS/Android side to u
 
 
 ## Architecture of Currency Conversion API
-
+- **Base Url** = ```https://graduationprojectbm.up.railway.app```
 ## <mark style="background: #FFB86CA6;">1- Conversion Api</mark>
 
-**Abdo**
 ### Api Contract :
 ```
 GET : {{base_url}}/api/v1/currency/convert
@@ -112,7 +111,6 @@ Example : {{base_url}}/pair/USD/EGP/2.5
 
 ## <mark style="background: #FFB86CA6;">2- Compare API</mark>
 
-***Omar***
 ### Api Contract :
 ```
 GET : {{base_url}}/api/v1/currency/convert
@@ -144,7 +142,7 @@ GET : localhost:8080/api/v1/currency/convert
 
 ### OpenApi called :
 
-***We will called the same API in Convert but ==twice==
+***We will call the same API in Convert but ==twice==
 First One : src + des1
 Second One : src + des2***
 
@@ -162,7 +160,6 @@ Example :
 
 ### Api Contract :
 
-**Mirna**
 
 ***POST : to send request body for all currencies .***
 
@@ -239,7 +236,6 @@ Example :
 
 ## <mark style="background: #FFB86CA6;">4- Get All Currencies</mark>
 
-**==Rowayna==**
 ### Api Contract :
 ```
 GET : {{base_url}}/api/v1/currency
@@ -276,5 +272,40 @@ GET : localhost:8080/api/v1/currency
 
 ***==There is no Open APIs needed , only static data!!==***
 
+****
 
+## Design Patterns used
 
+### Adapter Design Pattern
+
+#### Problem
+We call outsource open API Service that return the response of data with such format, the problem is **Our Service expect and wait the response with different format to deal with it.**
+
+#### Solution
+You can create an **Adapter**. This is a special object that converts the interface of one object so that another object can understand it.<br>
+An **Adapter** wraps one of the objects to hide the complexity of conversion happening behind the scenes. The wrapped object isn’t even aware of the adapter.
+
+#### Adapter Design Pattern UML
+![structure-object-adapter.png](structure-object-adapter.png)
+
+****
+
+## Testing 
+Using `JUnit5` and `Mockito`.
+### Types of testing:
+1. **Unit Test**
+   - test the ```CurrncyServiceImpl``` to ensure that the functionality of dealing with `FeignClient` is effective + testing the **Caching** methods.
+   - test the ```CurrencyController``` before deploying the API to make sure that all status codes and api responses working successfully.
+
+****
+
+## Caching 
+- Using in-memory cache on the server itself.
+- Using `Caffeine` for Caching Configuration and for customizing the `CachingConfig`.
+
+#### Why we don't use **Redis Server** for caching instead of in-memory cache ??
+- **Redis** is independent server for applying the caching , it gives us a lot of functionalities for configure the caching like multiple Datastructures and scheduling tasks .
+- But our project is very simple , doesn't have any databases or heavy work that needs the power of **Redis** in caching.
+- Our cache operations are very simple and can be implemented easily with in-memory cache.
+- On the other side , **Redis** needs to deployment process specifically for it.
+- So , we have trade-offs , and our decision goes for simplicity over functionality.

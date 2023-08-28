@@ -1,10 +1,10 @@
 package com.bm.graduationproject.web.controllers;
 
-import com.bm.graduationproject.dtos.CurrencyResponseDto;
+import com.bm.graduationproject.models.entities.CurrencyDetails;
 import com.bm.graduationproject.exceptions.NotValidAmountException;
 import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.web.response.ApiCustomResponse;
-import com.bm.graduationproject.models.FavoritesResponseDto;
+import com.bm.graduationproject.web.response.FavoritesResponse;
 import com.bm.graduationproject.services.CurrencyService;
 import com.bm.graduationproject.services.CurrencyServiceImpl;
 import jakarta.validation.constraints.Min;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -50,8 +49,8 @@ public class CurrencyController {
     }
 
     @GetMapping()
-    public ResponseEntity<ApiCustomResponse<List<CurrencyResponseDto>>> getAllCurrencies() {
-        return ResponseEntity.ok(ApiCustomResponse.<List<CurrencyResponseDto>>builder()
+    public ResponseEntity<ApiCustomResponse<List<CurrencyDetails>>> getAllCurrencies() {
+        return ResponseEntity.ok(ApiCustomResponse.<List<CurrencyDetails>>builder()
                 .data(service.getAllCurrencies())
                 .statusCode(200)
                 .isSuccess(true)
@@ -60,10 +59,10 @@ public class CurrencyController {
 
 
     @PostMapping()
-    public ResponseEntity<ApiCustomResponse<FavoritesResponseDto>> getExchangeRate(@RequestParam(name = "base") Currency baseCurrency, @RequestBody List<Currency> favorites) {
-        return ResponseEntity.ok(ApiCustomResponse.<FavoritesResponseDto>builder()
+    public ResponseEntity<ApiCustomResponse<FavoritesResponse>> getExchangeRate(@RequestParam(name = "base") Currency baseCurrency, @RequestBody List<Currency> favorites) {
+        return ResponseEntity.ok(ApiCustomResponse.<FavoritesResponse>builder()
                 .data(favorites.isEmpty()
-                        ? new FavoritesResponseDto()
+                        ? new FavoritesResponse()
                         : service.getExchangeRate(baseCurrency, favorites))
                 .isSuccess(true)
                 .message(favorites.isEmpty()

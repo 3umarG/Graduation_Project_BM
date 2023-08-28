@@ -1,14 +1,14 @@
 package com.bm.graduationproject.services;
 
 import com.bm.graduationproject.config.CachingConfig;
-import com.bm.graduationproject.dtos.CompareResponseDto;
-import com.bm.graduationproject.dtos.ConversionResponseDto;
-import com.bm.graduationproject.dtos.CurrencyResponseDto;
+import com.bm.graduationproject.web.response.CompareResponse;
+import com.bm.graduationproject.web.response.ConversionResponse;
+import com.bm.graduationproject.models.entities.CurrencyDetails;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
-import com.bm.graduationproject.models.FavoritesResponseDto;
+import com.bm.graduationproject.web.response.FavoritesResponse;
 import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.repositories.CurrencyRepository;
-import com.bm.graduationproject.web.response.ConversionOpenApiResponse;
+import com.bm.graduationproject.dtos.ConversionOpenApiDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,16 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,7 +62,7 @@ class CurrencyServiceImplTest {
         CurrencyRepository repository = Mockito.mock(CurrencyRepository.class);
         CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository,adapter);
 
-        ConversionOpenApiResponse apiResponse = new ConversionOpenApiResponse();
+        ConversionOpenApiDto apiResponse = new ConversionOpenApiDto();
 
         apiResponse.setConversion_rate(0.93);
         apiResponse.setConversion_result(46.5);
@@ -73,7 +70,7 @@ class CurrencyServiceImplTest {
         when(repository.getCurrencyPair(Mockito.anyString(), Mockito.anyString(), Mockito.anyDouble()))
                 .thenReturn(apiResponse);
 
-        ConversionResponseDto result = currencyService.convert("USD", "EUR", 50.0);
+        ConversionResponse result = currencyService.convert("USD", "EUR", 50.0);
 
         Assertions.assertEquals("USD", result.getSource());
         Assertions.assertEquals("EUR", result.getDestination());
@@ -86,8 +83,8 @@ class CurrencyServiceImplTest {
         CurrencyRepository repository = Mockito.mock(CurrencyRepository.class);
         CurrencyServiceImpl currencyService = new CurrencyServiceImpl(repository,adapter);
 
-        ConversionOpenApiResponse apiResponse1 = new ConversionOpenApiResponse();
-        ConversionOpenApiResponse apiResponse2 = new ConversionOpenApiResponse();
+        ConversionOpenApiDto apiResponse1 = new ConversionOpenApiDto();
+        ConversionOpenApiDto apiResponse2 = new ConversionOpenApiDto();
 
 
         apiResponse1.setConversion_result(46.5);
@@ -98,7 +95,7 @@ class CurrencyServiceImplTest {
         when(repository.getCurrencyPair(Mockito.anyString(), Mockito.anyString(), Mockito.anyDouble()))
                 .thenReturn(apiResponse1, apiResponse2);
 
-        CompareResponseDto result = currencyService.compare("USD", "EUR", "KWD", 50.0);
+        CompareResponse result = currencyService.compare("USD", "EUR", "KWD", 50.0);
 
         Assertions.assertEquals("USD", result.getSource());
         Assertions.assertEquals(15.5, result.getAmount2());
@@ -116,25 +113,25 @@ class CurrencyServiceImplTest {
         favourites.add(Currency.AED);
         favourites.add(Currency.EUR);
         Map<String, Double> currencies_rates = new HashMap<>();
-        List<CurrencyResponseDto> favoriteCurrenciesList = new ArrayList<>();
+        List<CurrencyDetails> favoriteCurrenciesList = new ArrayList<>();
         favourites.forEach(f -> {
             currencies_rates.put(f.name(), 0.082);
-            CurrencyResponseDto currencyResponseDto =
-                    new CurrencyResponseDto(f.name(), f.getCountry(),f.getFlagImageUrl(), 0.082);
-            favoriteCurrenciesList.add(currencyResponseDto);
+            CurrencyDetails currencyDetails =
+                    new CurrencyDetails(f.name(), f.getCountry(),f.getFlagImageUrl(), 0.082);
+            favoriteCurrenciesList.add(currencyDetails);
         });
         ExchangeRateOpenApiResponseDto exchangeRateOpenApiResponseDto =
                 ExchangeRateOpenApiResponseDto.builder().result("success")
                         .base_code(baseCurrency.name()).conversion_rates(currencies_rates).build();
         //Act
         when(currencyRepository.getExchangeRate(Mockito.anyString())).thenReturn(exchangeRateOpenApiResponseDto);
-        FavoritesResponseDto favoritesResponseDto = currencyService.getExchangeRate(baseCurrency, favourites);
+        FavoritesResponse favoritesResponse = currencyService.getExchangeRate(baseCurrency, favourites);
         //Assert
-        assertNotEquals(favoritesResponseDto, null);
-        assertEquals(favoritesResponseDto.getCurrencies().size(), 3);
-        assertEquals(favoritesResponseDto.getBase(), baseCurrency.name());
-        favoritesResponseDto.getCurrencies().forEach(f -> assertEquals(f.rate(), 0.082));
-        assertEquals(favoritesResponseDto.getCurrencies(), favoriteCurrenciesList);
+        assertNotEquals(favoritesResponse, null);
+        assertEquals(favoritesResponse.getCurrencies().size(), 3);
+        assertEquals(favoritesResponse.getBase(), baseCurrency.name());
+        favoritesResponse.getCurrencies().forEach(f -> assertEquals(f.rate(), 0.082));
+        assertEquals(favoritesResponse.getCurrencies(), favoriteCurrenciesList);
     }
 
 
@@ -143,7 +140,7 @@ class CurrencyServiceImplTest {
 
         // Arrange
         cache = cacheManager.getCache("conversionCache");
-        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiDto.builder()
                 .base_code("KWD")
                 .target_code("USD")
                 .conversion_rate(105.0)
@@ -165,7 +162,7 @@ class CurrencyServiceImplTest {
 
         // Arrange
         cache = cacheManager.getCache("compareCache");
-        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiDto.builder()
                 .base_code("KWD")
                 .target_code("USD")
                 .conversion_rate(105.0)
@@ -192,15 +189,15 @@ class CurrencyServiceImplTest {
 
         //Arrange
         List<Currency> currencies = List.of(Currency.values());
-        List<CurrencyResponseDto> actualResponse = new ArrayList<>();
+        List<CurrencyDetails> actualResponse = new ArrayList<>();
         currencies.forEach(r -> {
-            CurrencyResponseDto currencyResponseDto = new CurrencyResponseDto(r.name(), r.getCountry(), r.getFlagImageUrl(), null);
-            actualResponse.add(currencyResponseDto);
+            CurrencyDetails currencyDetails = new CurrencyDetails(r.name(), r.getCountry(), r.getFlagImageUrl(), null);
+            actualResponse.add(currencyDetails);
 
         });
 
         //Act
-        List<CurrencyResponseDto> expectedResponse = currencyService.getAllCurrencies();
+        List<CurrencyDetails> expectedResponse = currencyService.getAllCurrencies();
 
         //Assert
 
@@ -216,7 +213,7 @@ class CurrencyServiceImplTest {
         String to = "USD";
         double amount = 10.5;
         cache = cacheManager.getCache("conversionCache");
-        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiDto.builder()
                 .base_code(from)
                 .target_code(to)
                 .conversion_rate(amount)
@@ -247,7 +244,7 @@ class CurrencyServiceImplTest {
         String des2 = "EUR";
         Double amount = 10.5;
         cache = cacheManager.getCache("compareCache");
-        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiResponse.builder()
+        when(currencyRepository.getCurrencyPair(any(), any(), any())).thenReturn(ConversionOpenApiDto.builder()
                 .base_code("KWD")
                 .target_code("USD")
                 .conversion_rate(10.5)

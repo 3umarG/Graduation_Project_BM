@@ -1,9 +1,9 @@
 package com.bm.graduationproject.controllers;
 
-import com.bm.graduationproject.dtos.CompareResponseDto;
-import com.bm.graduationproject.dtos.ConversionResponseDto;
-import com.bm.graduationproject.dtos.CurrencyResponseDto;
-import com.bm.graduationproject.models.FavoritesResponseDto;
+import com.bm.graduationproject.web.response.CompareResponse;
+import com.bm.graduationproject.web.response.ConversionResponse;
+import com.bm.graduationproject.models.entities.CurrencyDetails;
+import com.bm.graduationproject.web.response.FavoritesResponse;
 import com.bm.graduationproject.models.enums.Currency;
 import com.bm.graduationproject.services.CurrencyServiceImpl;
 import com.bm.graduationproject.web.controllers.CurrencyController;
@@ -46,8 +46,8 @@ public class CurrencyControllerTests {
         // Arrange
         String uri = "/api/v1/currency";
         List<Currency> currencies = Arrays.stream(Currency.values()).toList();
-        List<CurrencyResponseDto> responseDtos = currencies.stream()
-                .map(c -> new CurrencyResponseDto(c.name(), c.getCountry(), c.getFlagImageUrl(), null))
+        List<CurrencyDetails> responseDtos = currencies.stream()
+                .map(c -> new CurrencyDetails(c.name(), c.getCountry(), c.getFlagImageUrl(), null))
                 .toList();
         ApiCustomResponse<?> response = ApiCustomResponse.builder()
                 .data(responseDtos)
@@ -93,8 +93,8 @@ public class CurrencyControllerTests {
     public void convertOrCompare_sendTo2ParameterOrNot_selectBetweenConvertOrCompare() throws Exception {
         // Arrange
         String uri = "/api/v1/currency/conversion";
-        ConversionResponseDto conversionDto = Mockito.mock(ConversionResponseDto.class);
-        CompareResponseDto compareDto = Mockito.mock(CompareResponseDto.class);
+        ConversionResponse conversionDto = Mockito.mock(ConversionResponse.class);
+        CompareResponse compareDto = Mockito.mock(CompareResponse.class);
         when(service.convert(Mockito.anyString(), Mockito.anyString(), Mockito.anyDouble())).thenReturn(conversionDto);
         when(service.compare(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyDouble())).thenReturn(compareDto);
 
@@ -330,7 +330,7 @@ public class CurrencyControllerTests {
                 .isSuccess(true)
                 .message("There is no Favorites !!")
                 .statusCode(HttpStatus.OK.value())
-                .data(new FavoritesResponseDto())
+                .data(new FavoritesResponse())
                 .build();
         ObjectMapper mapper = new ObjectMapper();
         String expectedEndpointResponse = mapper.writeValueAsString(expectedApiResponse)
@@ -358,12 +358,12 @@ public class CurrencyControllerTests {
         favs.add(Currency.JPY);
         favs.add(Currency.USD);
 
-        List<CurrencyResponseDto> favsRates = new ArrayList<>();
+        List<CurrencyDetails> favsRates = new ArrayList<>();
 
-        favsRates.add(new CurrencyResponseDto(Currency.JPY.name(), Currency.JPY.getCountry(), Currency.JPY.getFlagImageUrl(), 22.5));
-        favsRates.add(new CurrencyResponseDto(Currency.USD.name(), Currency.USD.getCountry(), Currency.USD.getFlagImageUrl(), 22.5));
+        favsRates.add(new CurrencyDetails(Currency.JPY.name(), Currency.JPY.getCountry(), Currency.JPY.getFlagImageUrl(), 22.5));
+        favsRates.add(new CurrencyDetails(Currency.USD.name(), Currency.USD.getCountry(), Currency.USD.getFlagImageUrl(), 22.5));
 
-        FavoritesResponseDto serviceResponse = FavoritesResponseDto.builder()
+        FavoritesResponse serviceResponse = FavoritesResponse.builder()
                 .currencies(favsRates)
                 .base(validCurrencyName)
                 .build();

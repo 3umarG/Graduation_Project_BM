@@ -1,8 +1,8 @@
 package com.bm.graduationproject.services;
 
-import com.bm.graduationproject.dtos.CurrencyResponseDto;
+import com.bm.graduationproject.models.entities.CurrencyDetails;
 import com.bm.graduationproject.dtos.ExchangeRateOpenApiResponseDto;
-import com.bm.graduationproject.models.FavoritesResponseDto;
+import com.bm.graduationproject.web.response.FavoritesResponse;
 import com.bm.graduationproject.models.enums.Currency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +17,9 @@ public class ExchangeRateAdapterImpl implements ExchangeRateAdapter  {
     private Logger logger = LoggerFactory.getLogger(ExchangeRateAdapterImpl.class);
 
     @Override
-    public FavoritesResponseDto adapt(ExchangeRateOpenApiResponseDto apiResponse, Currency base, List<Currency> favorites) {
+    public FavoritesResponse adapt(ExchangeRateOpenApiResponseDto apiResponse, Currency base, List<Currency> favorites) {
         String baseCurrency = base.name();
-        List<CurrencyResponseDto> currencies = new ArrayList<>();
+        List<CurrencyDetails> currencies = new ArrayList<>();
         Map<String, Double> currencies_rate = apiResponse.getConversion_rates();
 
         extractFavoritesCurrenciesFromApiResponse(favorites, currencies_rate, currencies);
@@ -27,19 +27,19 @@ public class ExchangeRateAdapterImpl implements ExchangeRateAdapter  {
         return buildFavoritesResponseDto(baseCurrency, currencies);
     }
 
-    private static FavoritesResponseDto buildFavoritesResponseDto(String baseCurrency, List<CurrencyResponseDto> currencies) {
-        FavoritesResponseDto adaptedResponse = new FavoritesResponseDto();
+    private static FavoritesResponse buildFavoritesResponseDto(String baseCurrency, List<CurrencyDetails> currencies) {
+        FavoritesResponse adaptedResponse = new FavoritesResponse();
         adaptedResponse.setBase(baseCurrency);
         adaptedResponse.setCurrencies(currencies);
         return adaptedResponse;
     }
 
-    private void extractFavoritesCurrenciesFromApiResponse(List<Currency> favorites, Map<String, Double> currencies_rate, List<CurrencyResponseDto> currencies) {
+    private void extractFavoritesCurrenciesFromApiResponse(List<Currency> favorites, Map<String, Double> currencies_rate, List<CurrencyDetails> currencies) {
         favorites.forEach(f -> {
             Double currencyRate = getCurrencyValue(currencies_rate, f.name());
             Currency currency = Currency.valueOf(f.name());
             logger.info(f.name() + " exchange rate is: " + currencyRate);
-            CurrencyResponseDto currencyInfo = new CurrencyResponseDto(currency.name(), currency.getCountry(),
+            CurrencyDetails currencyInfo = new CurrencyDetails(currency.name(), currency.getCountry(),
                     currency.getFlagImageUrl(), currencyRate);
             currencies.add(currencyInfo);
         });

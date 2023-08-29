@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 @RestController
 @Validated
 @CrossOrigin(
-        origins = "https://graduationprojectbm-production.up.railway.app",
+        origins = "*",
         maxAge = 3600,
         allowedHeaders = "*",
         allowCredentials = "true")
